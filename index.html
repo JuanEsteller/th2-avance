@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="./resources/ol.css">
+        <link rel="stylesheet" href="resources/fontawesome-all.min.css">
+        <link href="resources/photon-geocoder-autocomplete.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="./resources/ol-layerswitcher.css">
+        <link rel="stylesheet" href="./resources/qgis2web.css">
+        <style>
+        html, body {
+            background-color: #ffffff;
+        }
+        .ol-control > * {
+            background-color: #f8f8f8!important;
+            color: #444444!important;
+            border-radius: 0px;
+        }
+        .ol-attribution a, .gcd-gl-input::placeholder, .search-layer-input-search::placeholder {
+            color: #444444!important;
+        }
+        .search-layer-input-search {
+            background-color: #f8f8f8!important;
+        }
+        .ol-control > *:focus, .ol-control >*:hover {
+            background-color: rgba(248, 248, 248, 0.7)!important;
+        }
+        .ol-control {
+            background-color: rgba(255,255,255,.4) !important;
+            padding: 2px !important;
+        }
+        </style>
+
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        /* Pie del mapa: sustituye la atribución de qgis2web */
+        .ol-attribution {
+            display: none !important;
+        }
+        #pie-mapa {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #444444;
+            font: 12px Arial, Helvetica, sans-serif;
+            padding: 2px 8px;
+            pointer-events: none;
+        }
+        </style>
+        <title>Sector TH-2 Salobreña · Avance parcelario</title>
+    </head>
+    <body>
+        <div id="map">
+            <div id="popup" class="ol-popup">
+                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                <div id="popup-content"></div>
+            </div>
+        </div>
+        <div id="pie-mapa">TH2 Salobreña</div>
+        <script src="resources/qgis2web_expressions.js"></script>
+<script src="resources/proj4.js"></script>
+        <script>proj4.defs('EPSG:25830','+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs');</script>
+        <script src="./resources/functions.js"></script>
+        <script src="./resources/ol.js"></script>
+        <script src="./resources/ol-layerswitcher.js"></script>
+        <script src="resources/photon-geocoder-autocomplete.min.js"></script>
+        <script src="resources/olms.js"></script>
+        <script src="layers/TH2_1.js"></script><script src="layers/parcelas_2.js"></script><script src="layers/cesiones_3.js"></script><script src="layers/proindivisos_4.js"></script>
+        <script src="styles/TH2_1_style.js"></script><script src="styles/parcelas_2_style.js"></script><script src="styles/cesiones_3_style.js"></script><script src="styles/proindivisos_4_style.js"></script>
+        <script src="./layers/layers.js" type="text/javascript"></script>
+        <script src="./resources/Autolinker.min.js"></script>
+        <script src="./resources/qgis2web.js"></script>
+        <script>
+        // Capa Catastro (WMS de la DG del Catastro), desactivada al abrir el mapa.
+        // Va encima de la ortofoto y debajo de las parcelas.
+        try {
+            var lyr_catastro = new ol.layer.Image({
+                title: 'Catastro',
+                visible: false,
+                source: new ol.source.ImageWMS({
+                    url: 'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx',
+                    params: { 'LAYERS': 'Catastro', 'FORMAT': 'image/png', 'TRANSPARENT': true, 'VERSION': '1.1.1' },
+                    ratio: 1
+                })
+            });
+            map.getLayers().insertAt(1, lyr_catastro);
+            if (typeof layerSwitcher !== 'undefined' && layerSwitcher.renderPanel) {
+                layerSwitcher.renderPanel();
+            }
+        } catch (e) {
+            console.log('No se pudo añadir la capa Catastro:', e);
+        }
+
+        // Oculta el crédito "qgis2web · OpenLayers · QGIS" esté donde esté
+        // (se vuelve a aplicar si OpenLayers lo redibuja).
+        function ocultarCreditoQgis2web() {
+            document.querySelectorAll('a').forEach(function (a) {
+                if (/qgis2web/i.test(a.textContent)) {
+                    var caja = a.closest('.ol-control') || a.parentElement;
+                    if (caja && caja.id !== 'pie-mapa') {
+                        caja.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            });
+        }
+        ocultarCreditoQgis2web();
+        new MutationObserver(ocultarCreditoQgis2web)
+            .observe(document.body, { childList: true, subtree: true });
+        </script>
+    </body>
+</html>
